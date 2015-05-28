@@ -55,23 +55,15 @@ App.prototype.start = function() {
 
     getUserMedia(
         {
-            "audio": {
-                // "mandatory": {
-                //     "googEchoCancellation": "false",
-                //     "googAutoGainControl": "false",
-                //     "googNoiseSuppression": "false",
-                //     "googHighpassFilter": "false"
-                // },
-                "optional": []
-            },
+            "audio": true,
         }, function(stream) {
             mediaStreamSource = audioContext.createMediaStreamSource(stream);
 
-            resample_processor = audioContext.createResampleProcessor(1024, 1, 1, 16000);
+            resample_processor = audioContext.createResampleProcessor(256, 1, 1, 16000);
 
             mediaStreamSource.connect(resample_processor);
 
-            endOfSpeechProcessor = audioContext.createEndOfSpeechProcessor(1024);
+            endOfSpeechProcessor = audioContext.createEndOfSpeechProcessor(256);
 
             endOfSpeechProcessor.endOfSpeechCallback = function() {
                 console.log('END OF SPEECH');

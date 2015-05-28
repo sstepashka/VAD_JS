@@ -61,13 +61,16 @@ VAD.prototype.frameActive = function(frame) {
 
     if (this.frameNumber < this.noiseFrames) {
         this.noiseEnergy += energy / this.noiseFrames;
+        console.log(this.noiseEnergy);
     } else {
         if (czCount >= this.minCZ && czCount <= this.maxCZ) {
-            if (energy > this.noiseEnergy * this.energyFactor) {
+            if (energy > /*this.noiseEnergy*/ Math.max(0.01, this.noiseEnergy) * this.energyFactor) {
                 result = true;
             }
         }
     }
+
+
 
     return result;
 };
