@@ -24,7 +24,13 @@ function MagicBuffer(chunkSize) {
 } 
 
 MagicBuffer.prototype.push = function(array) {
-    Array.prototype.push.apply(this.array_data, array);
+    new_array = new Array();
+
+    for (i = 0; i < array.length; i+= 2) {
+        new_array[i / 2] = array[i];
+    }
+
+    Array.prototype.push.apply(this.array_data, new_array);
     this.process();
 };
 
@@ -38,37 +44,33 @@ MagicBuffer.prototype.process = function(first_argument) {
     }
 };
 
-function _floatTo16BitPCM(output, offset, input) {
-    for (var i = 0; i < input.length; i++, offset += 2) {
-        var s = Math.max(-1, Math.min(1, input[i]));
-        output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    }
-}
-
-function encodeRAW(samples) {
-    var buffer = new ArrayBuffer(samples.length * 2);
-    var view = new DataView(buffer);
-    _floatTo16BitPCM(view, 0, samples);
-    return view.buffer;
-}
+MagicBuffer.prototype.drop = function() {
+    this.array_data.splice(0, this.array_data.length);
+};
 
 AudioContext.prototype.createEndOfSpeechProcessor = function(bufferSize) {
     script_processor = this.createScriptProcessor(bufferSize, 1, 1);
 
+    script_processor.endOfSpeechCallback = null;
+
     var vad = new VAD();
+
+    script_processor.vad = vad;
 
     var buffer = new MagicBuffer(160);
 
     buffer.callback = function(elements) {
-        vad.process(elements);
+        vad_result = vad.process(elements);
+
+        if (vad_result !== 'CONTINUE' && script_processor.endOfSpeechCallback) {
+            script_processor.endOfSpeechCallback();
+            buffer.drop();
+        }
     }
 
     script_processor.onaudioprocess = function(event) { 
         inp = event.inputBuffer.getChannelData(0);
         out = event.outputBuffer.getChannelData(0);
-
-        console.log("1");
-
         buffer.push(inp);
 
         for(var i = 0; i < inp.length; i++) {

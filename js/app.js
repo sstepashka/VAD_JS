@@ -44,8 +44,6 @@ App.prototype.process = function(first_argument) {
     var result = inp.reduce(function(sum, current) {
         return Math.abs(sum + current)
     }, 0);
-
-    // console.log(result);
 };
 
 App.prototype.start = function() {
@@ -73,6 +71,10 @@ App.prototype.start = function() {
             mediaStreamSource.connect(resample_processor);
 
             endOfSpeechProcessor = audioContext.createEndOfSpeechProcessor(1024);
+
+            endOfSpeechProcessor.endOfSpeechCallback = function() {
+                console.log('END OF SPEECH');
+            };
 
             js_node = audioContext.createScriptProcessor(1024, 1, 1);
             js_node.onaudioprocess = function(у) { 

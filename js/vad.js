@@ -22,17 +22,14 @@ VAD.prototype.process = function(frame) {
     } else {
         if (this.time - this.lastSequenceTime > this.silenceLengthMilis) {
             if (this.lastSequenceTime > 0) {
-                //terminate
-                console.log("terminate");
+                return 'TERMINATE';
             } else {
-                //no speech
-                console.log("no speech");
+                return 'NO_SPEECH';
             }
         }
     }
 
-    // console.log(this.time);
-    // console.log(this.silenceLengthMilis);
+    return 'CONTINUE';
 };
 
 VAD.prototype.frameActive = function(frame) {
@@ -85,7 +82,7 @@ VAD.prototype.reset = function(first_argument) {
     this.silenceLengthMilis = this.maxSilenceLengthMilis;
     this.sequenceLengthMilis = 0.03;
     this.minSequenceCount = 3;
-    this.energyFactor = 3.1;
+    this.energyFactor = 5.1;
 
     this.noiseFrames = Math.round(150. / this.frameLengthMilis);
     this.noiseEnergy = 0.0;
