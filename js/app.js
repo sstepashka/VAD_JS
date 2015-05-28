@@ -56,12 +56,12 @@ App.prototype.start = function() {
     getUserMedia(
         {
             "audio": {
-                "mandatory": {
-                    "googEchoCancellation": "false",
-                    "googAutoGainControl": "false",
-                    "googNoiseSuppression": "false",
-                    "googHighpassFilter": "false"
-                },
+                // "mandatory": {
+                //     "googEchoCancellation": "false",
+                //     "googAutoGainControl": "false",
+                //     "googNoiseSuppression": "false",
+                //     "googHighpassFilter": "false"
+                // },
                 "optional": []
             },
         }, function(stream) {

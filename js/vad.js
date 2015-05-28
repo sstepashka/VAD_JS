@@ -12,7 +12,7 @@ VAD.prototype.process = function(frame) {
             this.sequenceCounter ++;
             if (this.sequenceCounter >= this.minSequenceCount) {
                 this.lastSequenceTime = this.time;
-                this.silenceLengthMilis = Math.max(this.minSilenceLengthMilis, (this.silenceLengthMilis - this.minSilenceLengthMilis) / 4.0);
+                this.silenceLengthMilis = Math.max(this.minSilenceLengthMilis, this.silenceLengthMilis - (this.maxSilenceLengthMilis - this.minSilenceLengthMilis) / 4.0);
             }
         } else {
             this.sequenceCounter = 1;
@@ -39,7 +39,7 @@ VAD.prototype.frameActive = function(frame) {
     var lastsign = 0;
 
     for (var i = 0; i < frame.length; i++) {
-        energy += (frame[i] * frame[i]) / 160;
+        energy += (frame[i] * frame[i]) / 160.0;
 
         var sign = 0;
         if (frame[i] > 0) {

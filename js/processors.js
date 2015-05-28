@@ -69,8 +69,6 @@ AudioContext.prototype.createEndOfSpeechProcessor = function(bufferSize) {
     }
 
     script_processor.onaudioprocess = function(event) { 
-        console.log("1");
-        
         inp = event.inputBuffer.getChannelData(0);
         out = event.outputBuffer.getChannelData(0);
         buffer.push(inp);
