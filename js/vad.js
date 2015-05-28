@@ -82,7 +82,7 @@ VAD.prototype.reset = function(first_argument) {
     this.silenceLengthMilis = this.maxSilenceLengthMilis;
     this.sequenceLengthMilis = 0.03;
     this.minSequenceCount = 3;
-    this.energyFactor = 5.1;
+    this.energyFactor = 3.1;
 
     this.noiseFrames = Math.round(150. / this.frameLengthMilis);
     this.noiseEnergy = 0.0;

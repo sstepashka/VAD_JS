@@ -28,6 +28,7 @@ window.onload = function() {
 function App () {
     this.isListening = false;
     this.node = null;
+    this.resample_processor = null;
 }
 
 App.prototype.toggle = function() {
@@ -66,7 +67,7 @@ App.prototype.start = function() {
         }, function(stream) {
             mediaStreamSource = audioContext.createMediaStreamSource(stream);
 
-            resample_processor = audioContext.createResampleProcessor(256, 1, 1, 16000);
+            resample_processor = audioContext.createResampleProcessor(1024, 1, 1, 16000);
 
             mediaStreamSource.connect(resample_processor);
 
@@ -74,19 +75,12 @@ App.prototype.start = function() {
 
             endOfSpeechProcessor.endOfSpeechCallback = function() {
                 console.log('END OF SPEECH');
-            };
-
-            js_node = audioContext.createScriptProcessor(1024, 1, 1);
-            js_node.onaudioprocess = function(у) { 
-                that.process(у); 
+                that.stop();
             };
 
             resample_processor.connect(endOfSpeechProcessor);
 
-            endOfSpeechProcessor.connect(js_node);
-
-            js_node.connect(audioContext.destination);
-
+            that.resample_processor = resample_processor;
             that.node = mediaStreamSource;
         });
 
@@ -97,8 +91,14 @@ App.prototype.stop = function() {
     this.isListening = false;
     $("toggle").textContent = "Start";
 
-    this.node.disconnect();
-    this.node = null;
+    try {
+        this.node.disconnect();
+        this.node = null;
+        this.resample_processor.disconnect();
+        this.resample_processor = null;
+    } catch(e) {
+        //pass
+    }
 
     console.log("stop");
 };
